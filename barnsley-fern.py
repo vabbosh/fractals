@@ -42,4 +42,7 @@ for i in range(1, 500000):
 plt.figure(figsize=(10, 20))
 plt.scatter(x[100:], y[100:], s=0.2, edgecolor='green')
 
+plt.savefig("./numpy-fern.png")
+
 plt.show()
+
