@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # initializing the affine transform
-stem = np.array([[0, 0, 0], [0, 0.16, 0], [0, 0, 1]])
-small_leaflet = np.array([[0.85, 0.04, 0], [-0.04, 0.85, 1.6], [0, 0, 1]])
-large_L_leaflet = np.array([[0.2, -0.26, 0], [0.23, 0.22, 1.6], [0, 0, 1]])
-large_R_leaflet = np.array([[-0.15, 0.28, 0], [0.26, 0.24, 0.44], [0, 0, 1]])
+stem = np.array([[0, 0, 0.5], [0, 0.16, 0], [0, 0, 1]])
+small_leaflet = np.array([[0.849, 0.037, 0.075], [-0.037, 0.849, 0.183], [0, 0, 1]])
+large_L_leaflet = np.array([[0.197, -0.226, 0.4], [0.226, 0.197, 0.049], [0, 0, 1]])
+large_R_leaflet = np.array([[-0.15, 0.283, 0.575], [0.26, 0.237, -0.084], [0, 0, 1]])
 
 delta = 0.01
 P = np.array([max(delta, np.abs(np.linalg.det(stem))),
@@ -21,26 +21,18 @@ frac_ops = [lambda p: np.dot(stem, p),
             lambda p: np.dot(large_L_leaflet, p),
             lambda p: np.dot(large_R_leaflet, p)]
 
-x = []
-y = []
+# init points array
+N = 300000
+np_points = np.zeros((2,N))
+np_points = np.row_stack((np_points, np.ones((1,N))))
 
-# setting first element to 0
-x.append(0)
-y.append(0)
+# generate the points
+for i in range(N-1):
+    np_points.T[i+1] = np.random.choice(frac_ops, p=P)(np_points.T[i])
 
-current = 0
-
-for i in range(1, 500000):
-
-    # generates a random integer between 1 and 100
-    newPoint = np.random.choice(frac_ops, p=P)([x[current], y[current], 1])
-    x.append(newPoint[0])
-    y.append(newPoint[1])
-
-    current = current + 1
-
-plt.figure(figsize=(10, 20))
-plt.scatter(x[100:], y[100:], s=0.2, edgecolor='green')
+# Draw the fern
+plt.figure(figsize=(8, 15))
+plt.scatter(np_points[0,10:], np_points[1,10:], s=0.2, edgecolor='green')
 
 plt.savefig("./numpy-fern.png")
 
